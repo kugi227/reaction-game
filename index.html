@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>反射神経ゲーム（スマホ対応）</title>
 
-<!-- スマホで画面サイズを合わせるための設定 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -20,7 +19,6 @@ h1{
   font-size:28px;
 }
 
-/* スタートボタン（スマホでも押しやすく） */
 button{
   font-size:20px;
   padding:15px 30px;
@@ -31,7 +29,6 @@ button{
   margin-top:10px;
 }
 
-/* クリックする箱（スマホでも押しやすいサイズ） */
 #box{
   width:90%;
   max-width:350px;
@@ -44,9 +41,11 @@ button{
   border-radius:15px;
   cursor:pointer;
   user-select:none;
+
+  /* スマホの反応を良くする */
+  touch-action: manipulation;
 }
 
-/* 結果表示 */
 #result{
   font-size:22px;
   margin-top:20px;
@@ -67,10 +66,12 @@ button{
 <script>
 let startTime;
 
-// スタートボタンを押したとき
+// スタート
 function startGame(){
+  startTime = null;
   document.getElementById("result").innerHTML = "待ってください...";
-  
+  document.getElementById("box").style.background = "gray";
+
   let random = Math.random() * 3000 + 1000;
 
   setTimeout(function(){
@@ -83,10 +84,7 @@ function startGame(){
   }, random);
 }
 
-// スマホでもPCでも動くクリック処理
-document.getElementById("box").onclick = clickGame;
-document.getElementById("box").ontouchstart = clickGame;
-
+// クリック・タップ処理（共通）
 function clickGame(){
 
   if(!startTime){
@@ -97,7 +95,6 @@ function clickGame(){
   let endTime = new Date().getTime();
   let reaction = (endTime - startTime) / 1000;
 
-  // 速さで表示を変える
   if(reaction < 0.25){
     document.getElementById("result").innerHTML =
       "あなたの反応速度は " + reaction + " 秒です！<br>神レベル！🔥";
@@ -118,6 +115,15 @@ function clickGame(){
   startTime = null;
   document.getElementById("box").style.background = "gray";
 }
+
+// PCクリック
+document.getElementById("box").onclick = clickGame;
+
+// スマホタップ（改善ポイント！）
+document.getElementById("box").ontouchend = function(e){
+  e.preventDefault(); // 二重反応防止
+  clickGame();
+};
 </script>
 
 </body>
